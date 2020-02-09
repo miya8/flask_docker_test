@@ -1,0 +1,216 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!--bootstrap4移行ガイド https://cccabinet.jpn.org/bootstrap4/components/forms-->
+<!---参考ページ：https://laraweb.net/surrounding/6217/-->
+<!--bootstrapのクラスメモ: mt=MarginTop p=Padding bg=BackGroundcolor-->
+<div class="container">
+    <h1>{{ title }}</h1>
+    <div class="row m-2">
+        {{ message }}
+    </div>
+    <form class="mt-5 p-5 bg-light needs-validation" id="frm_cond" action="/result" method="post"  enctype="multipart/form-data" novalidate>
+
+        <!--名前 1行にラベルとINPUT-->
+        <!--div class="form-group row"-->
+        <div class="form-row mb-4">
+            <label class="col-md-2 col-form-label" for="name">名前名前名前名前名前名前名前</label>
+            <div class="col-md-auto">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+            </div>
+        </div>
+
+        <!--氏名-->
+        <div class="form-row mb-4">
+            <div class="col-md-6">
+                <label for="lastName">名字</label>
+                <input type="text" class="form-control" id="lastName" placeholder="名字" required>
+                <div class="invalid-feedback">
+                    入力してください
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="firstName">名前</label>
+                <input type="text" class="form-control" id="firstName" placeholder="名前" required>
+                <div class="invalid-feedback">
+                    入力してください
+                </div>
+            </div>
+        </div>
+
+        <!--Eメール-->
+        <div class="form-group">
+            <label for="inputEmail" class="col-form-label">Eメール</label>
+            <div>
+                <input type="email" class="form-control col-md-6" id="inputEmail" placeholder="sample@sample.com"" required>
+                <div class=" invalid-feedback">入力してください</div>
+        </div>
+
+        <!--パスワード-->
+        <div class="form-group mb-5">
+            <label for="inputPassword" class="col-form-label">パスワード</label>
+            <div>
+                <input type="password" class="form-control col-md-6" id="inputPassword" placeholder="パスワード" required>
+                <div class="invalid-feedback">入力してください</div>
+                <small id="passwordHelpBlock"
+                    class="form-text text-muted">パスワードは、文字と数字を含めて8～20文字で、空白、特殊文字、絵文字を含むことはできません。</small>
+            </div>
+        </div>
+
+        <!--性別-->
+        <div class="form-group">
+            <div class="row mb-4">
+                <legend class="col-form-label col-sm-2">性別</legend>
+                <div class="col-sm-10">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="customRadioInline1" name="gender" class="custom-control-input" required>
+                        <label class="custom-control-label" for="customRadioInline1">女性</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="customRadioInline2" name="gender" class="custom-control-input">
+                        <label class="custom-control-label" for="customRadioInline2">男性</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--ランク-->
+        <div class="form-row mb-5">
+            <legend class="col-form-label col-md-2">ランク</legend>
+            <div class="col-md-10">
+                {% for key in rank_dict %}
+                <div>
+                    {% for rank, lbl in rank_dict[key] %}
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" id="chkRank_{{ rank }}" name="chk_rank" class="form-check-input" value={{ lbl }}>
+                        <label class="form-check-label" for="chkRank_{{ rank }}">{{ lbl }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!--商品選択-->
+        <div class="form-row mb-5">
+            <div class="col-md-5">
+                <label for="slctShohinResource">商品選択（複数選択可）</label>
+                <select multiple class="form-control" id="slctShohinResource" size=20>
+                    {% for shohin in product_list %}
+                    <option>{{ shohin }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 mt-5">
+                <button type="button" class="btn btn-primary btn-sm btn-block m-3 mx-auto" id="btnSelectShohin">選択</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block m-3 mx-auto" id="btnDeSelectShohin">選択解除</button>
+            </div>
+            <div class="col-md-5">
+                <label for="slctShohinSelected">選択済の商品</label>
+                <select multiple class="form-control" id="slctShohinSelected" size=20>
+                </select>
+            </div>
+        </div>
+
+        <!--ファイル選択-->
+        <div class="custom-file mb-5">
+            <input type="file" class="custom-file-input pb-3" id="selectFile" name="upload_files" multiple required>
+            <label class="custom-file-label pb-3" for="selectFile" data-browse="参照">ファイル選択...</label>
+            <div class="invalid-feedback">ファイルを選択してください</div>
+        </div>
+
+        <!--備考欄-->
+        <div class="form-group pb-3">
+            <label for="Textarea">備考欄</label>
+            <textarea class="form-control" id="Textarea" rows="3" placeholder="その他、質問など"></textarea>
+        </div>
+
+        <!--利用規約-->
+        <div class="form-group pb-3">
+            <div class="custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" value="" id="invalidCheck" required>
+                <label class="custom-control-label" for="invalidCheck">
+                    利用規約に同意する
+                </label>
+                <div class="invalid-feedback mb-3">提出する前に同意する必要があります</div>
+            </div>
+        </div>
+
+        <!--ボタンブロック-->
+        <button type="submit" class="btn btn-primary" id="btnSubmit">実行する</button>
+
+        <!--値渡し用-->
+        <input id="txtShohinSelected" name="txt_shohin_selected" val="" hidden>
+    </form>
+
+</div><!-- /container -->
+
+<script>
+    // bootstrap4移行ガイドより
+    // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+    (function () {
+        'use strict';
+
+        window.addEventListener('load', function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ        
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener("submit", function (event) {
+                    if (form === $("#frm_cond")[0]) {
+                        console.log("★★★★★");
+                    }
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                }, false);
+            });
+
+            // 商品選択の処理
+            $("#btnSelectShohin").on("click", function (){
+                $("#slctShohinResource").val().forEach( function (shohin){
+                    $("#slctShohinSelected").append($("<option>").text(shohin));
+                });
+                $("#slctShohinResource > option:selected").remove();
+            });
+            $("#btnDeSelectShohin").on("click", function (){
+                $("#slctShohinSelected").val().forEach( function (shohin){
+                    $("#slctShohinResource").append($("<option>").text(shohin));
+                });
+                $("#slctShohinSelected > option:selected").remove();
+            });
+
+            // アップロードファイル選択時、ファイル名を表示する処理
+            $(".custom-file-input").on("change", handleFileSelect);
+            function handleFileSelect(evt) {
+                var files = evt.target.files;
+            
+                var output = [];
+                for (var i = 0, f; f = files[i]; i++) {
+                    output.push(escape(f.name));
+                    console.log(output)
+                }
+                    $(this).next(".custom-file-label").html(output.join(", "));
+            }
+
+            // 「実行する」ボタン押下時の処理
+            $("#btnSubmit").on("click", function (){
+                console.log($("#slctShohinSelected > option").text())
+                console.log($("#slctShohinSelected > option"))
+                console.log($("#slctShohinSelected > option").val())
+                var selected_shohin_list = []
+                //$("#slctShohinSelected > option").forEach( function (shohin) {
+                for (var shohin of $("#slctShohinSelected > option")) {
+                    selected_shohin_list.push(shohin.value);
+                }
+                //$("#txtShohinSelected").val($("#slctShohinSelected > option").val().join(","));
+                $("#txtShohinSelected").val(selected_shohin_list.join(","));
+            });
+
+        }, false);
+    })();
+</script>
+
+{% endblock %}
